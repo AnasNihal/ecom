@@ -9,7 +9,7 @@ class category(models.Model):
 class Product(models.Model):
     name=models.CharField(max_length=20)
     price = models.FloatField()
-    details=models.CharField(max_length=30)
+    details=models.TextField()
     image=models.ImageField(upload_to="product",null=True,blank=True)
     catry=models.ForeignKey(category,on_delete=models.CASCADE,null=True,blank=True)
 
@@ -21,7 +21,7 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.name
+        return f"Order #{self.id} - {self.user.username}"
     
 class OrderItem(models.Model):
     order=models.ForeignKey(Order,on_delete=models.CASCADE)
@@ -29,4 +29,4 @@ class OrderItem(models.Model):
     qty = models.IntegerField()
     
     def __str__(self):
-        return self.name
+      return f"{self.qty} x {self.product.name} (Order #{self.order.id})"
