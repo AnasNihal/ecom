@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-12 px-4">
+    <h1 class="text-4xl font-bold mb-10 text-center text-gray-800">Our Products</h1>
+
+    <div class="w-full flex justify-center mb-10">
+  <form method="get" action="{% url 'filterproduct' %}" class="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-md shadow-md">
+    <label for="category" class="text-gray-700 font-medium">Filter by Category:</label>
+    <select name="category" id="category" onchange="this.form.submit()"
+      class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="">All</option>
+      {% for c in cat %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+
+    {% if product %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% for product in product %}
+        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                 class="w-full h-48 object-cover rounded-t-lg">
+            {% else %}
+            <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
+                No Image
+            </div>
+            {% endif %}
+            <div class="p-4">
+                <h2 class="text-lg font-semibold text-gray-900 truncate">{{ product.name }}</h2>
+                <p class="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{{ product.details }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-md font-bold text-green-600">₹{{ product.price }}</span>
+                    <a href="/viewproduct/{{product.id}}" class="text-sm text-blue-600 hover:underline">View</a>
+                </div> 
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 mt-10">No products available.</p>
+    {% endif %}
+</div>
+{% endblock %}
