@@ -9,4 +9,9 @@ urlpatterns = [
     path("register/",views.register, name="register"),
     path("login/",views.login, name="login"),
     path("logout/",views.logout, name="logout"),
+    # path("profile/",views.profilepage,name="profile"),
+    path('viewcart/',views.viewcart,name="viewcart"),
+    path("addcart/<int:d_id>",views.addcart,name="addcart"),
+    path('profile/addproduct',views.addproduct,name="addproduct"),
+    path('profile/editproduct/<int:p_id>',views.editproduct,name="editproduct")
     ]

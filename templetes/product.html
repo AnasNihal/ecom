@@ -17,8 +17,6 @@
     </select>
   </form>
 </div>
-
-
     {% if product %}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {% for product in product %}
@@ -32,12 +30,15 @@
             </div>
             {% endif %}
             <div class="p-4">
-                <h2 class="text-lg font-semibold text-gray-900 truncate">{{ product.name }}</h2>
-                <p class="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{{ product.details }}</p>
+                <h2 class="text-lg font-semibold text-gray-900 truncate mb-2">{{ product.name }}</h2>
                 <div class="flex items-center justify-between">
                     <span class="text-md font-bold text-green-600">₹{{ product.price }}</span>
-                    <a href="/viewproduct/{{product.id}}" class="text-sm text-blue-600 hover:underline">View</a>
-                </div> 
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'editproduct' product.id %}" class="text-sm text-yellow-600 hover:underline">Edit</a>
+                        <a href="" class="text-sm text-red-600 hover:underline">Delete</a>
+                        <a href="{% url 'viewproduct' product.id %}" class="text-sm text-blue-600 hover:underline">View</a>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
