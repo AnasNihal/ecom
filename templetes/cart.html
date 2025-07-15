@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-4xl mx-auto mt-12 px-4">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Your Cart</h1>
+
+  {% if cart_items %}
+    <div class="space-y-6">
+
+      {% for item in cart_items %}
+        <div class="border rounded-lg p-4 flex items-center justify-between shadow-sm">
+          <div>
+            <h2 class="text-lg font-semibold">{{ item.product.name }}</h2>
+            <p class="text-sm text-gray-600">Price: ₹{{ item.product.price }}</p>
+            <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
+            <p class="text-sm text-gray-600">Subtotal: ₹{{ item.subtotal|default:0|floatformat:2 }}</p>
+          </div>
+          <a href="" class="text-red-500 hover:underline">Remove</a>
+        </div>
+      {% endfor %}
+
+      <!-- Total -->
+      <div class="text-right text-xl font-bold text-green-600">
+        Total: ₹{{ total }}
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-between mt-6">
+        <a href="{% url 'home' %}" class="px-5 py-2 bg-gray-200 rounded hover:bg-gray-300 text-black">
+          ← Back to Products
+        </a>
+
+        <form action="" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Buy Now
+          </button>
+        </form>
+      </div>
+    </div>
+
+  {% else %}
+    <p class="text-gray-500">Your cart is empty.</p>
+    <a href="{% url 'home' %}" class="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      Go to Products
+    </a>
+  {% endif %}
+</div>
+
+{% endblock %}

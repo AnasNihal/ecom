@@ -7,7 +7,7 @@ class category(models.Model):
         return self.name
     
 class Product(models.Model):
-    name=models.CharField(max_length=20)
+    name=models.CharField(max_length=40)
     price = models.FloatField()
     details=models.TextField()
     image=models.ImageField(upload_to="product",null=True,blank=True)
