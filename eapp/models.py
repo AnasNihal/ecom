@@ -12,6 +12,9 @@ class Product(models.Model):
     details=models.TextField()
     image=models.ImageField(upload_to="product",null=True,blank=True)
     catry=models.ForeignKey(category,on_delete=models.CASCADE,null=True,blank=True)
+    us = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+
 
     def __str__(self):
         return self.name
