@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Product,category
 from django.contrib.auth.models import User,auth
 from .forms import ProductForm
+from django.contrib import messages
 
 
 def home(request):
@@ -84,7 +85,9 @@ def addproduct(request):
     if request.method == 'POST':
         f = ProductForm (request.POST,request.FILES)
         if f.is_valid():
-            f.save()
+            x = f.save(commit=False)
+            x.us=request.user
+            x.save()
             return redirect('/')
     else:
         f=ProductForm()
@@ -131,17 +134,65 @@ def viewcart(request):
     })
 
 def addcart(request,d_id):
-    product = get_object_or_404(Product, id=d_id) 
-    cart = request.session.get('cart' , {})
+    if request.user.is_authenticated:
+        product = get_object_or_404(Product, id=d_id) 
+        cart = request.session.get('cart' , {})
 
-    if str() in cart:
-        cart[str(d_id)] += 1
+        if str(d_id) in cart:
+            cart[str(d_id)] += 1
+        else:
+            cart[str(d_id)] = 1
+
+        request.session['cart'] = cart
+        return redirect('viewcart')
     else:
-        cart[str(d_id)] = 1
+        return redirect('login')
 
+
+
+def increase_qty(request,i_id):
+    cart = request.session.get('cart',{})
+     
+    if str(i_id):
+        cart[str(i_id)] += 1
+    else:
+        cart[str(i_id)] = 1
+ 
     request.session['cart'] = cart
     return redirect('viewcart')
 
 
+def decrease_qty(request, i_id):
+    print("== Decrease view called ==")
+
+    cart = request.session.get('cart', {})
+    print("Cart before:", cart)
+
+    if str(i_id) in cart:
+        cart[str(i_id)] -= 1
+        print(f"Item {i_id} decreased to", cart[str(i_id)])
+
+        if cart[str(i_id)] <= 0:
+            del cart[str(i_id)]
+            print(f"Item {i_id} removed from cart")
+
+    request.session['cart'] = cart
+    print("Cart after:", cart)
+
+    return redirect('viewcart')
 
 
+def remove_item(request,r_id):
+    cart = request.session.get('cart',{})
+    product_id = str(r_id)
+
+
+    if product_id in cart:
+        cart.pop(product_id)
+        messages.success(request,"Product Removed Success!!")
+    else:
+        messages.warning(request,"Product was not found")
+
+
+    request.session['cart'] = cart
+    return redirect('viewcart')
