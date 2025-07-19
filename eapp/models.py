@@ -6,6 +6,14 @@ class category(models.Model):
     def __str__(self):
         return self.name
     
+class Profile(models.Model):
+    image = models.ImageField(upload_to='product')
+    us = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.us)
+
+    
 class Product(models.Model):
     name=models.CharField(max_length=40)
     price = models.FloatField()
@@ -13,7 +21,6 @@ class Product(models.Model):
     image=models.ImageField(upload_to="product",null=True,blank=True)
     catry=models.ForeignKey(category,on_delete=models.CASCADE,null=True,blank=True)
     us = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-
 
 
     def __str__(self):

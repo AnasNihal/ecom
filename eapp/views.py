@@ -103,8 +103,12 @@ def editproduct(request,p_id):
             return redirect('/')
     else:
         x=Product.objects.get(id=p_id)
-        f=ProductForm(instance=x)
-        return render(request,"profile.html",{"fm":f})
+        
+        if x.us == request.user:
+            f=ProductForm(instance=x)
+            return render(request,"profile.html",{"fm":f})
+        
+        return render(request,"404.html")
 
 
 def viewcart(request):
