@@ -18,5 +18,8 @@ urlpatterns = [
     path('cart/decreaseqty/<int:i_id>',views.decrease_qty,name="decrease_qty"),
     path('cart/removeitem/<int:r_id>',views.remove_item,name="remove_item"),
     # path('profile/myproduct/<int:m_id>',views.myproduct,name="myproduct")
+    path('apiproduct/',views.apiproducts,name='apiproduct'),
+    path('apisingleproduct/<int:id>',views.apisingleproducts,name='apisingleproducts'),
+     path('api/',views.new,name='new'),
 
     ]

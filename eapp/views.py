@@ -4,6 +4,10 @@ from .models import Product,category
 from django.contrib.auth.models import User,auth
 from .forms import ProductForm
 from django.contrib import messages
+from .serializers import ProductSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
 
 
 def home(request):
@@ -200,3 +204,18 @@ def remove_item(request,r_id):
 
     request.session['cart'] = cart
     return redirect('viewcart')
+
+@api_view(['GET'])
+def apiproducts(request):
+    x=Product.objects.all()
+    y=ProductSerializer(x,many=True)
+    return Response(y.data)
+
+@api_view(['GET'])
+def apisingleproducts(request,id):
+    x=Product.objects.get(id=id)
+    y=ProductSerializer(x,many=False)
+    return Response(y.data)
+
+def new(request):
+    return render(request,"api.html")
