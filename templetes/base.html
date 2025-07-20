@@ -13,29 +13,31 @@
 <nav class="bg-white shadow sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <div class="text-2xl font-bold text-gray-900"> 🔭  DaddyCart</div>
-        <div class="space-x-6">
+        <div class="space-x-6 flex items-center"> {# Added flex and items-center here #}
             <a href="{% url 'home' %}" class="text-gray-600 hover:text-black">Home</a>
             <a href="{% url 'products' %}" class="text-gray-600 hover:text-black">Products</a>
             <a href="#contact" class="text-gray-600 hover:text-black">Contact</a>
             <a href="#" class="text-gray-600 hover:text-black">About</a>
 
             {% if user.is_authenticated %}
-               <div class="relative group inline-block text-gray-700">
-              <div class="relative" id="userDropdownWrapper">
-        <button id="userDropdownBtn"
-            class="text-gray-700 font-medium px-3 py-1 rounded hover:bg-gray-100 focus:outline-none cursor-pointer">
-            {{ user.username }}
-        </button>
+               <div class="relative group inline-block text-gray-700 flex items-center"> {# Added flex and items-center here #}
+                    <div class="relative" id="userDropdownWrapper">
+                        <button id="userDropdownBtn"
+                            class="text-gray-700 font-medium px-3 py-1 rounded hover:bg-gray-100 focus:outline-none cursor-pointer flex items-center"> {# Added flex and items-center here #}
+                            {# User Profile Picture #}
+                            <img src="{{ user.profile.image.url }}" alt="Profile" class="w-8 h-8 rounded-full mr-2 object-cover">
+                            {{ user.username }}
+                        </button>
 
-        <div id="userDropdownMenu"
-            class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg hidden z-50">
-            <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-            <a href="{% url 'addproduct' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Add Product</a>
-             <a href="{% url 'viewcart' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cart</a>
-            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
-        </div>
-            </div>
-            </div>
+                        <div id="userDropdownMenu"
+                            class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg hidden z-50">
+                            <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                            <a href="{% url 'addproduct' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Add Product</a>
+                            <a href="{% url 'viewcart' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cart</a> {# Corrected closing tag #}
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</a>
+                        </div>
+                    </div>
+                </div>
             {% else %}
                  <a href="{% url 'register' %}" class="text-gray-600 hover:text-black">Register</a>
                  <a href="{% url 'login' %} " class="text-gray-600 hover:text-black">Login</a>

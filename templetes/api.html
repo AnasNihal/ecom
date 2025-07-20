@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    
+
+    <script>
+
+        fetch('http://127.0.0.1:8000/apiproduct/')   
+        .then(response => response.json())
+        .then(x=>{
+
+            for (var i of x){
+             document.getElementById('x').innerHTML = `
+             
+            
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300">
+            <img src="${i.image}" alt="Name"
+                 class="w-full h-48 object-cover rounded-t-lg">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold text-gray-900 truncate mb-2">${i.name}</h2>
+                <div class="flex items-center justify-between">
+                    <span class="text-md font-bold text-green-600">₹${i.price}</span>
+                    <div class="flex items-center gap-3">
+                        <a href="" class="text-sm text-yellow-600 hover:underline">Edit</a>
+                        <a href="" class="text-sm text-blue-600 hover:underline">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+           `
+        }
+        })
+               
+    </script>
+</body>
+</html>
