@@ -9,7 +9,8 @@ urlpatterns = [
     path("register/",views.register, name="register"),
     path("login/",views.login, name="login"),
     path("logout/",views.logout, name="logout"),
-    # path("profile/",views.profilepage,name="profile"),
+    path("profile/",views.profile,name="profile"),
+    path('image/update/', views.profile_image_update, name='profile_image_update'),
     path('viewcart/',views.viewcart,name="viewcart"),
     path("addcart/<int:d_id>",views.addcart,name="addcart"),
     path('profile/addproduct',views.addproduct,name="addproduct"),
@@ -20,6 +21,6 @@ urlpatterns = [
     # path('profile/myproduct/<int:m_id>',views.myproduct,name="myproduct")
     path('apiproduct/',views.apiproducts,name='apiproduct'),
     path('apisingleproduct/<int:id>',views.apisingleproducts,name='apisingleproducts'),
-     path('api/',views.new,name='new'),
+    path('api/',views.new,name='new'),
 
     ]

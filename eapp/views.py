@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Product,category
+from .models import Product,category,Profile
 from django.contrib.auth.models import User,auth
-from .forms import ProductForm
+from .forms import ProductForm,ProfileForm
 from django.contrib import messages
 from .serializers import ProductSerializer
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view
 
 
 def home(request):
-    db = Product.objects.all()[:3]
+    db = Product.objects.all()[:6]
     cat=category.objects.all()
     return render(request,"home.html",{"product":db,"cat":cat} )
 
@@ -85,6 +85,9 @@ def filterproduct(request):
                    "cat":catogories,
                    "selected_catry":int(catlist) if catlist else None})
 
+def profile(request):
+    return render(request,"profile.html")
+
 def addproduct(request):
     if request.method == 'POST':
         f = ProductForm (request.POST,request.FILES)
@@ -95,7 +98,7 @@ def addproduct(request):
             return redirect('/')
     else:
         f=ProductForm()
-        return render(request,"profile.html",{"fm":f})
+        return render(request,"addproduct.html",{"fm":f})
 
 
 def editproduct(request,p_id):
@@ -110,10 +113,24 @@ def editproduct(request,p_id):
         
         if x.us == request.user:
             f=ProductForm(instance=x)
-            return render(request,"profile.html",{"fm":f})
+            return render(request,"addproduct.html",{"fm":f})
         
         return render(request,"404.html")
 
+def profile_image_update(request):
+    if request.method == 'POST':
+        UserProfile=request.user.profile
+        form = ProfileForm (request.POST,request.FILES,instance=UserProfile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            return redirect('profile')
+    else:
+        return redirect('profile')
 
 def viewcart(request):
     cart = request.session.get('cart',{})
@@ -204,6 +221,18 @@ def remove_item(request,r_id):
 
     request.session['cart'] = cart
     return redirect('viewcart')
+
+
+
+
+
+
+
+
+
+
+
+
 
 @api_view(['GET'])
 def apiproducts(request):

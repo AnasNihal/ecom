@@ -7,8 +7,8 @@ class category(models.Model):
         return self.name
     
 class Profile(models.Model):
-    image = models.ImageField(upload_to='product')
-    us = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    image = models.ImageField(default='ProfileImg/3d_default.jpg',upload_to='product')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.us)
@@ -40,3 +40,9 @@ class OrderItem(models.Model):
     
     def __str__(self):
       return f"{self.qty} x {self.product.name} (Order #{self.order.id})"
+    
+
+
+
+
+
