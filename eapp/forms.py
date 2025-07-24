@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Product
+from .models import Product,Profile
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -24,3 +24,8 @@ class ProductForm(forms.ModelForm):
                 'class': 'w-full border border-gray-300 rounded px-4 py-2 bg-white'
             }),
         }
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model= Profile
+        fields = ['image']

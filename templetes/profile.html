@@ -1,51 +1,164 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} {# Ensure this path is correct for your base.html #}
+
+{% block title %}My Profile - E-commerce{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-100 py-10 px-4">
-  <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow">
-    <h2 class="text-3xl font-bold mb-6 text-gray-800">🛒 Add New Product</h2>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
-      {% csrf_token %}
+        <!-- Page Header -->
+        <header class="mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Profile</h1>
+        </header>
 
-      <!-- Product Name -->
-      <div>
-        <label for="{{ fm.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-        {{ fm.name }}
-        {{ fm.name.errors }}
-      </div>
+        <!-- Profile Summary and Navigation (Combined Card) -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                <!-- Profile Image Display and Edit Form -->
+                <div class="relative group">
+                    {# user.profile.image.url will automatically point to default_avatar.png if no custom image is set #}
+                    <img src="{{ user.profile.image.url }}" alt="{{ user.first_name }}'s Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-indigo-200 shadow-sm">
+                    <!-- Overlay button for changing image -->
+                    <button onclick="document.getElementById('id_image').click()" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.867-1.291A2 2 0 0110.373 3H13.63a2 2 0 011.664.89l.867 1.291A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </button>
+                    <!-- Hidden form for image upload -->
+                    <form id="profileImage1Form" method="post" action="{% url 'profile_image_update' %}" enctype="multipart/form-data" class="hidden">
+                        {% csrf_token %}
+                        {# The 'id_image' comes from the default naming of a ModelForm field #}
+                        <input type="file" name="image" id="id_image" onchange="this.form.submit()" accept="image/*">
+                    </form>
+                </div>
+                <div>
+                    <!-- User's Full Name -->
+                    <h2 class="text-2xl font-bold text-gray-900">{% if user.is_authenticated %}{{ user.first_name }} {{ user.last_name }}{% else %}Guest User{% endif %}</h2>
+                    <!-- User's Email -->
+                    <p class="text-indigo-600 font-medium">{% if user.is_authenticated %}{{ user.email }}{% else %}guest@example.com{% endif %}</p>
+                    <!-- User's Join Date -->
+                    <span class="text-sm text-gray-500">Joined: {% if user.is_authenticated %}{{ user.date_joined|date:"F d, Y" }}{% else %}N/A{% endif %}</span>
+                </div>
+            </div>
+            
+            <!-- Quick Navigation Buttons (optional, can be removed) -->
+            <nav class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full md:w-auto">
+                <a href="#personal-info" class="px-5 py-2 rounded-lg bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors text-center shadow-md">
+                    Personal Info
+                </a>
+                {# Add back other navigation links if you re-enable sections #}
+            </nav>
+        </div>
 
-      <!-- Price -->
-      <div>
-        <label for="{{ fm.price.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-        {{ fm.price }}
-        {{ fm.price.errors }}
-      </div>
+        <!-- Main Content Area - Grid Layout for Sections -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-      <!-- Details -->
-      <div>
-        <label for="{{ fm.details.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Details</label>
-        {{ fm.details }}
-        {{ fm.details.errors }}
-      </div>
+            <!-- Personal Information Section -->
+            <section id="personal-info" class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-2xl font-semibold text-gray-900">Personal Information</h3>
+                    <button id="editProfileBtn" onclick="toggleEditMode()" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-200 transition-colors">
+                        Edit
+                    </button>
+                </div>
 
-      <!-- Image Upload -->
-      <div>
-        <label for="{{ fm.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
-        {{ fm.image }}
-        {{ fm.image.errors }}
-      </div>
+                <!-- View Mode -->
+                <div id="profileViewMode" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                        <p class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">{{ user.first_name }} {{ user.last_name }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                        <p class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Phone Number</label>
+                        <p class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">{% if user.profile.phone_number %}{{ user.profile.phone_number }}{% else %}N/A{% endif %}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                        {# For security, password fields are never displayed #}
+                        <p class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-800">••••••••</p>
+                    </div>
+                </div>
 
-      <!-- Submit Button -->
-      <div>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-          ➕ Add Product
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+                <!-- Edit Mode Form for User Details -->
+                <form id="profileEditForm" method="post" action="" class="space-y-4 hidden">
+                    {% csrf_token %}
+                    {# Render form fields from your UserDetailsForm #}
+                    <div>
+                        <label for="{{ user_details_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-600 mb-1">First Name</label>
+                        {{ user_details_form.first_name }}
+                    </div>
+                    <div>
+                        <label for="{{ user_details_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-600 mb-1">Last Name</label>
+                        {{ user_details_form.last_name }}
+                    </div>
+                    <div>
+                        <label for="{{ user_details_form.email.id_for_label }}" class="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                        {{ user_details_form.email }}
+                    </div>
+                    <div>
+                        <label for="{{ user_details_form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-600 mb-1">Phone Number</label>
+                        {{ user_details_form.phone_number }}
+                    </div>
+                    {# Note: Password change typically requires a separate, secure form #}
+                    {# For security, password fields are usually not pre-filled and require current password validation #}
+                    {# I've removed the raw password inputs from this view. Use Django's PasswordChangeForm if needed #}
 
-<!-- Apply Tailwind classes to Django widgets in forms.py -->
-{% endblock %}
+                    <div class="flex justify-end space-x-4 mt-6">
+                        <button type="button" onclick="toggleEditMode()" class="px-5 py-2 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 transition-colors shadow-md">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors shadow-md">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            {# Add back other sections like Orders, Addresses, Payment Methods here if needed #}
+            {# Follow the pattern: a <section> with its own ID, a view/edit mode if applicable, and a form #}
+
+        </div>
+
+        <!-- Footer for padding -->
+        <div class="h-16"></div>
+
+    </div>
+
+    <script>
+
+ function toggleEditMode() {
+            const viewMode = document.getElementById('profileViewMode');
+            const editForm = document.getElementById('profileEditForm');
+            const editBtn = document.getElementById('editProfileBtn');
+
+            if (viewMode.classList.contains('hidden')) {
+                // Currently in edit mode, switch to view mode
+                viewMode.classList.remove('hidden');
+                editForm.classList.add('hidden');
+                editBtn.textContent = 'Edit';
+                editBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                editBtn.classList.add('bg-indigo-100', 'text-indigo-700', 'hover:bg-indigo-200');
+            } else {
+                // Currently in view mode, switch to edit mode
+                viewMode.classList.add('hidden');
+                editForm.classList.remove('hidden');
+                editBtn.textContent = 'Cancel'; // Change button text to indicate active edit mode
+                editBtn.classList.remove('bg-indigo-100', 'text-indigo-700', 'hover:bg-indigo-200');
+                editBtn.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200'); // Change button style
+            }
+        }
+
+        // Apply Tailwind classes to Django form fields rendered by {{ form.field }}
+        // This makes sure dynamically rendered fields look good
+        document.addEventListener('DOMContentLoaded', function() {
+            const formElements = document.querySelectorAll('#profileEditForm input');
+            formElements.forEach(function(input) {
+                // Only apply if it's not a hidden input or submit button
+                if (input.type !== 'hidden' && input.type !== 'submit' && input.type !== 'button') {
+                    input.classList.add('w-full', 'p-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-indigo-500', 'focus:border-indigo-500');
+                }
+            });
+        });
+    </script>
+{% endblock content %}
