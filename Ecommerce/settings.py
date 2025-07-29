@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "eapp",
     'rest_framework',
+    'rest_framework.authtoken',
+    'django_celery_beat'
+
 ]
 
 MIDDLEWARE = [
@@ -132,3 +135,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # This is the absolute path to your
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.TokenAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated'],
+}
+
+
+CELERY_BROKER_URL= 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND='redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER= 'json'
+CELERY_TASK_SELERLIZER = 'json'
+CELERY_TIMEZONE = "UTC"

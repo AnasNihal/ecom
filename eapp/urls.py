@@ -22,5 +22,10 @@ urlpatterns = [
     path('apiproduct/',views.apiproducts,name='apiproduct'),
     path('apisingleproduct/<int:id>',views.apisingleproducts,name='apisingleproducts'),
     path('api/',views.new,name='new'),
+    path('darktheme/',views.setcookies,name='setcookie'),
+    path('apiforedit/',views.apiforedit,name="apiforedit"),
+    path('apiregister/',views.apiregister,name="apiregister"),
+    path('apilogin/',views.apilogin,name="apilogin"),
+
 
     ]

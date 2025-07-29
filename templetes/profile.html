@@ -115,10 +115,46 @@
                 </form>
             </section>
 
+
             {# Add back other sections like Orders, Addresses, Payment Methods here if needed #}
             {# Follow the pattern: a <section> with its own ID, a view/edit mode if applicable, and a form #}
 
         </div>
+         {% if product %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {% for product in product %}
+            <div class="bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition duration-300"> {# Darker card background #}
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                    class="w-full h-48 object-cover rounded-t-lg">
+                {% else %}
+                <div class="w-full h-48 bg-gray-700 flex items-center justify-center text-gray-400"> {# Darker placeholder background #}
+                    No Image
+                </div>
+                {% endif %}
+                <div class="p-4">
+                    <h2 class="text-lg font-semibold text-gray-100 truncate mb-2">{{ product.name }}</h2> {# Lighter text #}
+                    <div class="flex items-center justify-between">
+                        <span class="text-md font-bold text-green-400">₹{{ product.price }}</span> {# Adjusted green for contrast #}
+                        <div class="flex items-center gap-3">
+
+                            <a href="{% url 'editproduct' product.id %}" class="text-sm text-yellow-400 hover:underline">Edit</a> {# Adjusted yellow for contrast #}
+                          
+
+                          
+                            <a href="{% url 'viewproduct' product.id %}" class="text-sm text-blue-400 hover:underline">View</a> {# Adjusted blue for contrast #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-gray-400 mt-10">No products available.</p> {# Lighter text #}
+        {% endif %}
+    </div>
+
+
 
         <!-- Footer for padding -->
         <div class="h-16"></div>

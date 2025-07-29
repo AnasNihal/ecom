@@ -2,52 +2,108 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto mt-12 px-4">
-    <h1 class="text-4xl font-bold mb-10 text-center text-gray-800">Our Products</h1>
 
-    <div class="w-full flex justify-center mb-10">
-  <form method="get" action="{% url 'filterproduct' %}" class="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-md shadow-md">
-    <label for="category" class="text-gray-700 font-medium">Filter by Category:</label>
-    <select name="category" id="category" onchange="this.form.submit()"
-      class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <option value="">All</option>
-      {% for c in cat %}
-        <option value="{{ c.id }}">{{ c.name }}</option>
-      {% endfor %}
-    </select>
-  </form>
-</div>
-    {% if product %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {% for product in product %}
-        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}"
-                 class="w-full h-48 object-cover rounded-t-lg">
-            {% else %}
-            <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
-                No Image
-            </div>
-            {% endif %}
-            <div class="p-4">
-                <h2 class="text-lg font-semibold text-gray-900 truncate mb-2">{{ product.name }}</h2>
-                <div class="flex items-center justify-between">
-                    <span class="text-md font-bold text-green-600">₹{{ product.price }}</span>
-                    <div class="flex items-center gap-3">
-                      {% if product.us == user %}
-                        <a href="{% url 'editproduct' product.id %}" class="text-sm text-yellow-600 hover:underline">Edit</a>
-                       
-                      {% endif %}
-                      
-                        <a href="{% url 'viewproduct' product.id %}" class="text-sm text-blue-600 hover:underline">View</a>
+{% if theme == 'light' %}
+    <div class="max-w-7xl mx-auto mt-12 px-4">
+        <h1 class="text-4xl font-bold mb-10 text-center text-gray-800">Our Products</h1>
+
+        <div class="w-full flex justify-center mb-10">
+      <form method="get" action="{% url 'filterproduct' %}" class="flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-md shadow-md">
+        <label for="category" class="text-gray-700 font-medium">Filter by Category:</label>
+        <select name="category" id="category" onchange="this.form.submit()"
+          class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">All</option>
+          {% for c in cat %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+        {% if product %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {% for product in product %}
+            <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                    class="w-full h-48 object-cover rounded-t-lg">
+                {% else %}
+                <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
+                    No Image
+                </div>
+                {% endif %}
+                <div class="p-4">
+                    <h2 class="text-lg font-semibold text-gray-900 truncate mb-2">{{ product.name }}</h2>
+                    <div class="flex items-center justify-between">
+                        <span class="text-md font-bold text-green-600">₹{{ product.price }}</span>
+                        <div class="flex items-center gap-3">
+                          {% if product.us == user %}
+                            <a href="{% url 'editproduct' product.id %}" class="text-sm text-yellow-600 hover:underline">Edit</a>
+                          
+                          {% endif %}
+                          
+                            <a href="{% url 'viewproduct' product.id %}" class="text-sm text-blue-600 hover:underline">View</a>
+                        </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% else %}
+        <p class="text-center text-gray-500 mt-10">No products available.</p>
+        {% endif %}
     </div>
-    {% else %}
-    <p class="text-center text-gray-500 mt-10">No products available.</p>
-    {% endif %}
-</div>
+{% else %}
+
+    <div class="max-w-7xl mx-auto mt-12 px-4">
+        <h1 class="text-4xl font-bold mb-10 text-center text-gray-100">Our Products</h1> {# Changed text color #}
+
+        <div class="w-full flex justify-center mb-10">
+          {# Form for category filter #}
+          <form method="get" action="{% url 'filterproduct' %}" class="flex flex-col sm:flex-row items-center gap-4 bg-gray-800 p-4 rounded-md shadow-lg"> {# Darker background and shadow #}
+            <label for="category" class="text-gray-200 font-medium">Filter by Category:</label> {# Lighter text #}
+            <select name="category" id="category" onchange="this.form.submit()"
+              class="px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> {# Darker select, lighter text, darker border #}
+              <option value="">All</option>
+              {% for c in cat %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </div>
+
+        {% if product %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {% for product in product %}
+            <div class="bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition duration-300"> {# Darker card background #}
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                    class="w-full h-48 object-cover rounded-t-lg">
+                {% else %}
+                <div class="w-full h-48 bg-gray-700 flex items-center justify-center text-gray-400"> {# Darker placeholder background #}
+                    No Image
+                </div>
+                {% endif %}
+                <div class="p-4">
+                    <h2 class="text-lg font-semibold text-gray-100 truncate mb-2">{{ product.name }}</h2> {# Lighter text #}
+                    <div class="flex items-center justify-between">
+                        <span class="text-md font-bold text-green-400">₹{{ product.price }}</span> {# Adjusted green for contrast #}
+                        <div class="flex items-center gap-3">
+                          {% if product.us == user %}
+                            <a href="{% url 'editproduct' product.id %}" class="text-sm text-yellow-400 hover:underline">Edit</a> {# Adjusted yellow for contrast #}
+                          
+                          {% endif %}
+                          
+                            <a href="{% url 'viewproduct' product.id %}" class="text-sm text-blue-400 hover:underline">View</a> {# Adjusted blue for contrast #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-gray-400 mt-10">No products available.</p> {# Lighter text #}
+        {% endif %}
+    </div>
+{% endif %}
+
 {% endblock %}
