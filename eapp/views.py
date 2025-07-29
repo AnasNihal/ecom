@@ -7,6 +7,12 @@ from django.contrib import messages
 from .serializers import ProductSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.authtoken.models import Token
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
 
 
 
@@ -36,8 +42,6 @@ def register(request):
     else:
         return render(request,"register.html")
 
-
-
 def login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -59,9 +63,32 @@ def logout(request):
 
 
 def products(request):
-    db = Product.objects.all()
     cat=category.objects.all()
-    return render(request,"product.html",{"product":db,"cat":cat} )
+    if cache.get('data'):
+        db=cache.get('data')
+        print("db cache")
+    else:
+       db = Product.objects.all()
+       cache.set('data',db)
+       print("db product")
+    m = request.COOKIES.get('mode','light')
+    return render(request,"product.html",{"product":db,"cat":cat,"theme":m} )
+
+def setcookies(request):
+    m = request.COOKIES.get('mode','light')
+
+    # print(m)
+    if m == "light":
+        m = 'dark'
+    else:
+        m='light'
+    print(m)
+    
+    res = redirect('products')
+    res.set_cookie('mode',m)
+    return res
+
+
 
 
 
@@ -86,7 +113,8 @@ def filterproduct(request):
                    "selected_catry":int(catlist) if catlist else None})
 
 def profile(request):
-    return render(request,"profile.html")
+    product = Product.objects.filter(us = request.user)
+    return render(request,"profile.html",{"product":product})
 
 def addproduct(request):
     if request.method == 'POST':
@@ -119,7 +147,13 @@ def editproduct(request,p_id):
 
 def profile_image_update(request):
     if request.method == 'POST':
-        UserProfile=request.user.profile
+        
+        try:
+            UserProfile = request.user.profile
+        except ObjectDoesNotExist   :
+            UserProfile = Profile.objects.create(user=request.user)
+            messages.info(request, "A profile was created for your account as it was missing.")
+
         form = ProfileForm (request.POST,request.FILES,instance=UserProfile)
         if form.is_valid():
             form.save()
@@ -248,3 +282,43 @@ def apisingleproducts(request,id):
 
 def new(request):
     return render(request,"api.html")
+
+@api_view(['POST'])
+def apiforedit(request):
+    x=ProductSerializer(data=request.data)
+    if x.is_valid:
+        x.save()
+        return Response(x.data)
+    
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def apiregister(request):
+    Uname = request.data.get('username')
+    Pword = request.data.get('password')
+
+    if Uname is None or Pword is None:
+        return Response({'error':'Please provide Username and password '},status=status.HTTP_400_BAD_REQUEST)
+    
+    if User.objects.filter(username =Uname).exists():
+        return Response({'Error':"Username already taken"},status=status.HTTP_400_BAD_REQUEST)
+    
+    user =User.objects.create_user(username=Uname,password=Pword)
+    token ,_ = Token.objects.get_or_create(user=user)
+
+    return Response({'token':token.key,'username':user.username})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def apilogin(request):
+    Uname = request.data.get('username')
+    Pword = request.data.get('password')
+        
+    user = auth.authenticate(username = Uname,password = Pword)
+
+    if not user:
+        return Response({'error':"Invalid Credintials"},status=status.HTTP_401_UNAUTHORIZED)
+    
+    token,_ = Token.objects.get_or_create(user=user)
+    return Response({'token':token.key,'username':user.username})
